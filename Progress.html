@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>Examples</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+<style type="text/css">
+body{margin: 0;}
+    #progress_wrap{
+        position: absolute;
+        height: 20px;
+        line-height: 20px;
+        text-align: center;
+        color: #fff;
+        background: #f00;
+    }
+    ul li{width: 639px; height: 460px;} 
+    ul li.bg00{background: url(http://act.9666.cn/m/2015/07/17/images/0-1.png);}
+    ul li.bg01{background: url(http://act.9666.cn/m/2015/07/17/images/0-2.png);}
+    ul li.bg10{background: url(http://act.9666.cn/m/2015/07/17/images/1-1.png);}
+    ul li.bg11{background: url(http://act.9666.cn/m/2015/07/17/images/1-2.png);}
+    ul li.bg20{background: url(http://act.9666.cn/m/2015/07/17/images/2-1.png);}
+    ul li.bg21{background: url(http://act.9666.cn/m/2015/07/17/images/2-2.png);}
+    ul li.bg30{background: url(http://act.9666.cn/m/2015/07/17/images/3-1.png);}
+    ul li.bg31{background: url(http://act.9666.cn/m/2015/07/17/images/3-2.png);}
+    ul li.bg40{background: url(http://act.9666.cn/m/2015/07/17/images/4-1.png);}
+    ul li.bg41{background: url(http://act.9666.cn/m/2015/07/17/images/4-2.png);}
+    ul li.bg50{background: url(http://act.9666.cn/m/2015/07/17/images/4-1.png);}
+    ul li.bg51{background: url(http://act.9666.cn/m/2015/07/17/images/4-2.png);}
+    .clickNum,.time-wrap,.btn{width:693px;text-align:center;}
+    .score-wrap{widt
+        h:693px;text-align:center;font-size:14px;color:#000; margin-top:20px;}
+    .score2{font-size:18px;}
+    .score3{font-size:22px; color:#f00;}
+    .score4{font-size:26px; color:#f00;}
+    .score5{font-size:30px; color:#f00;}
+</style>
+<script src="http://cdn.bootcss.com/jquery/3.0.0-alpha1/jquery.min.js"></script>
+</head>
+<body>
+    <div id="progress_wrap">
+    </div>
+    <p class="time-wrap">剩余<span style="color:#f00;font-size:18px; margin:0 5px;"></span>秒</p>
+    <ul>
+        <li class="bg00"></li>
+    </ul>
+    <p class="clickNum">您一共戳了<span id="logClickNum" style="color:#f00;font-size:18px; margin:0 5px;">0</span>次</p>
+    <p class="score-wrap"></p>
+    <p class="btn"><input type="button" value="开始游戏" /></p>
+    <script type="text/javascript">
+        function Progress(opt) {
+            this.pics = opt.pics;
+            this.progressBar = opt.progressBar;
+            this.progressNo = opt.progressNo;
+            this.progressWrap = opt.progressWrap;
+            this.init();
+        };
+
+        Progress.prototype.init = function () {
+            var that = this;
+            that.load(0, that.pics.length); //加载第一张
+        };
+
+        Progress.prototype.render = function (index, len) {
+            var that = this;
+            var width = Math.floor((index / len) * 100) + "%";
+            //console.log(len);
+            that.progressBar.stop(true).animate({
+                width: width
+            }, 100, 'linear', function () {
+                that.progressNo.html(width);
+            });
+        };
+
+        //负责加载一张图片
+        Progress.prototype.load = function (index, length) {
+            var that = this;
+            var img = new Image();
+            img.src = that.pics[index];
+            img.onload = function () {
+                that.render(index + 1, length); //加载完成去渲染
+                if(index < length - 1){
+                    that.load(++index, length);
+                }
+                if (length -1 === index) {
+                    that.over();
+                }      
+            }               
+        };
+        //加载完成
+        Progress.prototype.over = function () {
+            var that = this;
+            setTimeout(function(){
+                that.progressWrap.hide();
+            }, 3000);
+        };
+    </script>
+
+    <script type="text/javascript">
+    new Progress({
+        pics: (function(){
+            return [
+                "0-1.png",
+                "0-2.png",
+                "1-1.png",
+                "1-2.png",
+                "2-1.png",
+                "2-2.png",
+                "3-1.png",
+                "3-2.png",
+                "4-1.png",
+                "4-2.png",
+                "btn.png",
+                "pointer.png",
+                "xiaoniu.png"
+            ].map(function(v){
+                var src='http://act.9666.cn/m/2015/07/17/images/' + v;
+                return src;
+            });
+        }()),
+        progressWrap: $('#progress_wrap'),
+        progressBar: $('#progress_wrap'),
+        progressNo: $('#progress_wrap')
+    });
+
+//点击熊切换背景
+var liWrap=$("li");
+function Bear(){
+    this.clickNum = 0;
+    this.div=$("#logClickNum");
+}
+
+Bear.prototype.init=function(){
+    this.clickNum = -1;
+    bear.sport();
+}
+
+Bear.prototype.sport=function(index){
+    this.clickNum++
+    var clickNum = Math.min(this.clickNum, 50);
+    var level = Math.floor(clickNum / 10); //向下取整 0-9都是0
+    var className='bg'+level+this.clickNum%2;
+    liWrap.attr('class',className);
+    this.div.html(this.clickNum);
+}
+var bear = new Bear();
+
+
+//插入打击次数获得分数
+function Score() {
+    this.score = 0;
+    this.div = $(".score-wrap");
+}
+
+Score.prototype.init=function(){
+    this.score = 0;
+    score.add();
+    this.div.html('');
+}
+
+Score.prototype.add = function() {
+    this.score++;
+    
+}
+Score.prototype.show = function() {
+    var classtexts = ['你太菜了', '不错，继续努力...', '很好，你还可以更好的...', '你太厉害了...', '你太牛了...', '你已经是神了...'];
+    var score = Math.min(this.score, 50);
+    var level = Math.floor(score / 10); //向下取整 0-9都是0
+    this.div
+        .html(classtexts[level])
+        .attr('class', 'score-wrap score' + level);
+}
+var score = new Score();
+
+//倒计时
+function CountTime(){
+    this.t;
+    this.count=10;
+    this.div=$('.time-wrap span');
+}
+CountTime.prototype.init=function(){
+    this.count=10;
+}
+CountTime.prototype.timers=function(){
+    if(this.count>=0){
+        this.div.html(this.count);
+        this.count--;
+        this.t=setTimeout(function(){
+            timer.timers()
+        },1000);   
+    }else{
+        timer.timesEnd();
+    }
+}
+CountTime.prototype.timesEnd=function(){
+    this.count=10;
+    alert("游戏结束");
+    score.show();
+    $('.btn').show();
+    $('.btn input').attr('value',"再玩一次");
+}
+var timer = new CountTime();
+
+//开始游戏
+$('.btn input').click(function(){
+        timer.timers();
+        bear.init();
+        score.init();
+        timer.init();
+        $('.btn').hide();
+});
+
+//戳熊
+liWrap.click(function(){
+    if($(".btn").is(":hidden")){  
+        bear.sport();
+        score.add(); 
+    }else{
+        alert("请先点击开始按钮");
+    }
+});
+
+</script>
+</body>
+</html>
